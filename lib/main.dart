@@ -38,17 +38,24 @@ class _SliderExampleState extends State<SliderExample> {
     _pageController = PageController(initialPage: 0);
 
     _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < _textList.length - 1) {
+      if (_currentPage < _textList.length) {
         _currentPage++;
-      } else {
-        _currentPage = 0;
+        _pageController.animateToPage(
+          _currentPage,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
       }
+    });
 
-      _pageController.animateToPage(
-        _currentPage,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-      );
+    _pageController.addListener(() {
+      if (_pageController.page == _textList.length.toDouble()) {
+        // 가상 페이지(마지막 페이지 이후의 페이지)에 도달했을 때
+        setState(() {
+          _currentPage = 0;
+        });
+        _pageController.jumpToPage(0);
+      }
     });
   }
 
@@ -67,8 +74,17 @@ class _SliderExampleState extends State<SliderExample> {
       ),
       body: PageView.builder(
         controller: _pageController,
-        itemCount: _textList.length,
+        itemCount: _textList.length + 1, // 가상 페이지를 위해 +1
         itemBuilder: (context, index) {
+          if (index == _textList.length) {
+            // 마지막 가상 페이지 처리
+            return Center(
+              child: Text(
+                _textList[0], // 첫 번째 페이지의 텍스트를 표시
+                style: TextStyle(fontSize: 24),
+              ),
+            );
+          }
           return Center(
             child: Text(
               _textList[index],
