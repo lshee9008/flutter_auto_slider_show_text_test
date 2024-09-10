@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,8 +20,6 @@ class TextSliderExample extends StatefulWidget {
 
 class _TextSliderExampleState extends State<TextSliderExample> {
   int _currentIndex = 0;
-  Timer? _timer;
-
   final List<String> _textList = [
     "Text 1",
     "Text 2",
@@ -34,17 +31,17 @@ class _TextSliderExampleState extends State<TextSliderExample> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      setState(() {
-        _currentIndex = (_currentIndex + 1) % _textList.length;
-      });
-    });
+    _startSliding();
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  Future<void> _startSliding() async {
+    while (true) {
+      await Future.delayed(Duration(seconds: 3), () {
+        setState(() {
+          _currentIndex = (_currentIndex + 1) % _textList.length;
+        });
+      });
+    }
   }
 
   @override
@@ -78,6 +75,7 @@ class _TextSliderExampleState extends State<TextSliderExample> {
     );
   }
 }
+
 
 
 
